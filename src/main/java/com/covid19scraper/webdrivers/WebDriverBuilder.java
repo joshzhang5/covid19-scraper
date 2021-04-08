@@ -5,16 +5,16 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 
-public class WebDriverHelper {
-  private static WebDriverHelper instance = null;
+public class WebDriverBuilder {
+  private static WebDriverBuilder instance = null;
 
-  private WebDriverHelper() {
+  private WebDriverBuilder() {
     initChromeWebDriverSettings();
   }
 
-  public static WebDriverHelper getInstance() {
+  public static WebDriverBuilder getInstance() {
     if (null == instance) {
-      return new WebDriverHelper();
+      return new WebDriverBuilder();
     }
     return instance;
   }

@@ -1,12 +1,14 @@
 package com.covid19scraper.scrapers;
 
 import com.covid19scraper.models.Appointment;
-import com.covid19scraper.webdrivers.WebDriverHelper;
+import com.covid19scraper.webdrivers.WebDriverBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import static com.covid19scraper.helpers.RandomWaitHelper.*;
 
 
 public class NycVaxScraper extends AppointmentScraper {
@@ -20,7 +22,7 @@ public class NycVaxScraper extends AppointmentScraper {
   public NycVaxScraper() {
     super(
         URL,
-        WebDriverHelper.getInstance().getChromeWebDriver()
+        WebDriverBuilder.getInstance().getChromeWebDriver()
     );
   }
 
@@ -37,24 +39,26 @@ public class NycVaxScraper extends AppointmentScraper {
 
     // page 1
     WebElement body = webDriver.findElements(By.className("vcms-body")).get(1);
-    body.findElement(By.className("slds-checkbox_faux")).click();
-    body.findElements(By.className("slds-radio_faux")).get(1).click();
-    body.findElement(By.className("slds-input")).sendKeys("12/06/1996");
-    body.findElements(By.className("slds-input")).get(1).sendKeys("10001");
-    body.findElements(By.className("slds-radio_faux")).get(2).click();
-
+    actAfterRandomWait(element -> element.findElement(By.className("slds-checkbox_faux")).click(), body);
+    actAfterRandomWait(element -> element.findElements(By.className("slds-radio_faux")).get(1).click(), body);
+    actAfterRandomWait(element -> element.findElement(By.className("slds-input")).sendKeys("12/06/1996"), body);
+    actAfterRandomWait(element -> element.findElements(By.className("slds-input")).get(1).sendKeys("10001"), body);
+    actAfterRandomWait(element -> element.findElements(By.className("slds-radio_faux")).get(2).click(), body);
+    actAfterRandomWait(element -> element.findElements(By.className("slds-button")).get(2).click(), body);
     // page 2
-    body.findElements(By.className("slds-button")).get(2).click();
     body = webDriver.findElements(By.className("vcms-body")).get(1);
-    body.findElements(By.className("slds-radio_faux")).get(1).click();
-    body.findElement(By.name("vaccineEligibilityConsentName")).sendKeys("Zarwan Hashem");
-    body.findElement(By.className("slds-checkbox_faux")).click();
-    body.findElements(By.className("slds-button")).get(1).click();
+    actAfterRandomWait(element -> element.findElements(By.className("slds-radio_faux")).get(1).click(), body);
+    actAfterRandomWait(element -> element.findElement(By.name("vaccineEligibilityConsentName")).sendKeys("Zarwan Hashem"), body);
+    actAfterRandomWait(element -> element.findElement(By.className("slds-checkbox_faux")).click(), body);
+    actAfterRandomWait(element -> element.findElements(By.className("slds-button")).get(1).click(), body);
 
-    webDriver.close();
-    return body
-        .findElement(By.className("question_label d-block slds-m-bottom_small"))
+    // page 3
+    body = webDriver.findElements(By.className("vcms-body")).get(1);
+    String htmlText = body
+        .findElement(By.className("appointment-section"))
         .getText();
+    webDriver.close();
+    return htmlText;
   }
 
   @Override
